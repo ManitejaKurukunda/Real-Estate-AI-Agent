@@ -7,7 +7,7 @@
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.100%2B-green)](https://fastapi.tiangolo.com/)
 [![OpenAI](https://img.shields.io/badge/OpenAI-GPT--4-orange)](https://openai.com/)
 [![SQL Server](https://img.shields.io/badge/SQL%20Server-2019%2B-red)](https://www.microsoft.com/sql-server)
-[![License](https://img.shields.io/badge/License-MIT-yellow)](LICENSE)
+
 
 ## 📋 Table of Contents
 - [Executive Summary](#executive-summary)
