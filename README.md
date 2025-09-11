@@ -17,7 +17,7 @@
 - [AI Intelligence Layer](#ai-intelligence-layer)
 - [Business Analytics](#business-analytics)
 - [API Documentation](#api-documentation)
-- [Performance Metrics](#performance-metrics)
+
 
 
 ## 🎯 Executive Summary
@@ -30,12 +30,11 @@ Seamless translation from questions like *"Show me our best performing multifami
 ## ✨ Key Features
 
 ### Core Capabilities
-- 🤖 **Natural Language to SQL** - 95%+ accuracy in query generation
+- 🤖 **Natural Language to SQL** - accuracy in query generation
 - 💭 **Conversation Memory** - Contextual follow-up questions and refinements
 - 📊 **Financial Metrics** - Real-time IRR, MOIC, NOI, Cap Rate calculations
 - 📁 **Multi-Format Export** - CSV, Excel, PDF with automated distribution
 - 📧 **Email Integration** - Scheduled reports with customizable attachments
-- ⚡ **Performance Optimization** - Handle 1M+ rows with sub-second response
 - ✏️ **Edit & Rerun** - Iterative query refinement functionality
 
 ### Business Intelligence
@@ -238,15 +237,6 @@ Content-Type: application/json
 }
 ```
 
-## 📈 Performance Metrics
-
-| Metric | Achievement | Technical Approach |
-|--------|-------------|-------------------|
-| **Query Response** | <2 seconds (90%) | Query optimization, indexing |
-| **Concurrent Users** | 100+ | Async processing, pooling |
-| **Data Processing** | 1M+ rows | Streaming, pagination |
-| **AI Accuracy** | 95%+ SQL generation | Fine-tuned prompts |
-| **System Uptime** | 99.9% | Error recovery, monitoring |
 
 ## 🛠️ Development
 
