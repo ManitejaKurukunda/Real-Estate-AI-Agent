@@ -26,8 +26,8 @@ except ImportError:
 try:
     from src.utils.email_utils import EmailUtilities
     email_sender = EmailUtilities(
-        sender_email="manitejakurukunda683@gmail.com",
-        sender_password="tcdc lfeu zhaq ndiz"
+        sender_email="test@gmail.com",
+        sender_password="xxxxxxxxxxx"
     )
     email_utils_available = True
 except ImportError:
@@ -408,4 +408,5 @@ if __name__ == "__main__":
             uvicorn.run(app, host="0.0.0.0", port=8001, log_level="info")
         except Exception as e2:
             print(f"❌ Server failed to start on port 8001: {e2}")
+
             print("💡 Try manually with: python server.py")
