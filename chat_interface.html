@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Real Estate AI - Enhanced Portfolio Chat</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f4f7fa;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(180deg, #1e3c72, #2a5298);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            box-shadow: 3px 0 15px rgba(0, 0, 0, 0.1);
+            overflow-y: auto;
+            min-height: 100vh;
+        }
+
+        .sidebar h2 {
+            margin-top: 0;
+            font-size: 20px;
+            margin-bottom: 15px;
+        }
+
+        .question-btn {
+            background: #ffffff10;
+            color: #fff;
+            border: 1px solid #ffffff33;
+            border-radius: 15px;
+            padding: 10px 15px;
+            margin: 5px 0;
+            cursor: pointer;
+            font-size: 14px;
+            text-align: left;
+            transition: 0.2s;
+            width: 100%;
+        }
+
+        .question-btn:hover {
+            background: #ffffff22;
+        }
+         
+        .sidebar-footer {
+            margin-top: auto;
+            padding: 15px 20px 40px 20px;
+            background: rgba(0, 0, 0, 0.2);
+            text-align: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.3);
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 13px;
+        }
+        
+        .sidebar-footer strong {
+            color: #ffffff;
+            font-size: 14px;
+            display: block;
+            margin-top: 5px;
+        }
+        .main-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #6dd5ed, #2193b0);
+            color: white;
+            text-align: center;
+            padding: 20px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .chat-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            overflow: hidden;
+        }
+
+        .chat-box {
+            flex: 1;
+            overflow-y: auto;
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.05);
+            margin-bottom: 20px;
+        }
+
+        .input-section {
+            display: flex;
+            gap: 10px;
+        }
+
+        .input-field {
+            flex: 1;
+            padding: 15px;
+            border-radius: 25px;
+            border: 2px solid #e0e0e0;
+            font-size: 16px;
+        }
+
+        .send-btn {
+            padding: 15px 25px;
+            background: #ffb400;
+            border: none;
+            color: #fff;
+            font-weight: bold;
+            font-size: 16px;
+            border-radius: 25px;
+            cursor: pointer;
+        }
+
+        .send-btn:hover {
+            background: #e09e00;
+        }
+
+        .message {
+            margin: 15px 0;
+            padding: 15px;
+            border-radius: 10px;
+            position: relative;
+        }
+
+        .user-message {
+            background: #d2f0ff;
+            margin-left: auto;
+            border-left: 4px solid #2196f3;
+            padding-right: 40px;
+        }
+
+        .ai-message {
+            background: #eaffea;
+            margin-right: auto;
+            border-left: 4px solid #4caf50;
+        }
+
+        .error {
+            background: #ffeaea;
+            border-left: 4px solid #f44336;
+            color: #c62828;
+        }
+
+        .edit-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #2196f3;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 5px 10px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: 0.2s;
+        }
+
+        .edit-btn:hover {
+            background: #1976d2;
+        }
+
+        .status {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: #4caf50;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            z-index: 1000;
+        }
+
+        .status.error {
+            background: #f44336;
+        }
+
+        /* Data table styles */
+        .data-table-container {
+            max-height: 400px;
+            max-width: 100%;
+            overflow: auto;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin: 15px 0;
+            background: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            font-size: 13px;
+            min-width: 600px;
+        }
+
+        .data-table th {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 12px 8px;
+            text-align: left;
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            border-bottom: 2px solid #5a6fd8;
+            white-space: nowrap;
+            min-width: 120px;
+        }
+
+        .data-table th:first-child {
+            position: sticky;
+            left: 0;
+            z-index: 11;
+            border-right: 2px solid #5a6fd8;
+        }
+
+        .data-table td {
+            padding: 10px 8px;
+            border-bottom: 1px solid #eee;
+            border-right: 1px solid #eee;
+            white-space: nowrap;
+            min-width: 120px;
+        }
+
+        .data-table td:first-child {
+            position: sticky;
+            left: 0;
+            background: #f8f9fa;
+            z-index: 9;
+            border-right: 2px solid #dee2e6;
+            font-weight: 500;
+        }
+
+        /* Download buttons */
+        .download-section {
+            display: none;
+            margin: 15px 0;
+            padding: 15px;
+            background: #f0f7ff;
+            border-radius: 8px;
+            border: 1px solid #d0e0ff;
+        }
+
+        .download-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .download-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .csv-btn {
+            background: #28a745;
+            color: white;
+        }
+
+        .excel-btn {
+            background: #17a2b8;
+            color: white;
+        }
+
+        .pdf-btn {
+            background: #dc3545;
+            color: white;
+        }
+
+        /* Email Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.4);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 10% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 400px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: black;
+        }
+
+        .form-group {
+            margin: 15px 0;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-family: inherit;
+        }
+        .message-content {
+            position: relative;
+        }
+
+        .edit-input {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #2196f3;
+            border-radius: 5px;
+            font-size: 16px;
+            font-family: inherit;
+        }
+
+        .edit-actions {
+            margin-top: 10px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .save-edit-btn, .cancel-edit-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .save-edit-btn {
+            background: #28a745;
+            color: white;
+        }
+
+        .cancel-edit-btn {
+            background: #6c757d;
+            color: white;
+        }
+
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #28a745;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 5px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            z-index: 1000;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <h2>💡 Sample Questions</h2>
+        <div id="sample-questions">
+            <!-- Buttons will be loaded here -->
+        </div>
+              <div class="sidebar-footer">
+            <strong>@Maniteja Kurukunda</strong>
+        </div>
+    </div>
+    
+    <div class="main-container">
+        <div class="header">
+            <h1>🏢 Real Estate AI Agent</h1>
+            <p>Chat with your portfolio intelligence engine</p>
+        </div>
+        
+        <div class="chat-container">
+            <div class="chat-box" id="chat-box">
+                <div class="message ai-message">
+                    <strong>👋 Welcome to Real Estate AI!</strong><br><br>
+                    I'm your portfolio intelligence assistant. Ask me anything about your assets, funds, investors, debt, and more!
+                    <div style="background: #fff8e1; border: 1px solid #ffe082; border-radius: 5px; padding: 10px; font-size: 13px; margin-top: 10px;">
+                        💡 Try: "Show all assets" or "What's our total portfolio value?"
+                    </div>
+                </div>
+            </div>
+            
+            <div class="input-section">
+                <input type="text" id="message-input" class="input-field" 
+                       placeholder="Ask about your portfolio..." 
+                       onkeypress="if(event.key==='Enter') sendMessage()">
+                <button class="send-btn" id="send-btn" onclick="sendMessage()">Send</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="status" id="status">Checking...</div>
+
+    <!-- Email Modal -->
+    <div id="emailModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeEmailModal()">&times;</span>
+            <h2>📧 Email Report</h2>
+            <div class="form-group">
+                <label>Recipient Email:</label>
+                <input type="email" id="recipient-email" placeholder="Enter recipient email">
+            </div>
+            <div class="form-group">
+                <label>Subject:</label>
+                <input type="text" id="email-subject" value="Real Estate Portfolio Report">
+            </div>
+            <div class="form-group">
+                <label>Message:</label>
+                <textarea id="email-message" rows="4" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 5px;">Please find attached the portfolio analysis report.</textarea>
+            </div>
+            <div class="form-group">
+                <label>Attachment Format:</label>
+                <select id="email-format">
+                    <option value="pdf">PDF Report</option>
+                    <option value="excel">Excel Spreadsheet</option>
+                    <option value="csv">CSV File</option>
+                </select>
+            </div>
+            <button class="send-email-btn" onclick="sendEmail()" style="background: #6f42c1; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px; margin-top: 10px; width: 100%;">Send Email</button>
+        </div>
+    </div>
+
+    <script>
+        let conversationHistory = [];
+        let messageIdCounter = 0;
+
+        window.onload = function () {
+            checkServerStatus();
+            loadSampleQuestions();
+        };
+
+        async function checkServerStatus() {
+            try {
+                const response = await fetch('/api/health');
+                const data = await response.json();
+                const statusEl = document.getElementById('status');
+
+                if (data.chat_agent_available) {
+                    statusEl.textContent = '✅ AI Ready';
+                    statusEl.className = 'status';
+                } else {
+                    statusEl.textContent = '❌ AI Error';
+                    statusEl.className = 'status error';
+                }
+            } catch (error) {
+                const statusEl = document.getElementById('status');
+                statusEl.textContent = '❌ Server Error';
+                statusEl.className = 'status error';
+            }
+        }
+
+        async function loadSampleQuestions() {
+            try {
+                const response = await fetch('/api/sample-questions');
+                const data = await response.json();
+
+                const container = document.getElementById('sample-questions');
+                container.innerHTML = '';
+
+                data.questions.forEach(question => {
+                    const button = document.createElement('button');
+                    button.className = 'question-btn';
+                    button.textContent = question;
+                    button.onclick = () => {
+                        document.getElementById('message-input').value = question;
+                        sendMessage();
+                    };
+                    container.appendChild(button);
+                });
+            } catch (error) {
+                console.error('Error loading sample questions:', error);
+            }
+        }
+
+        async function sendMessage(editedText = null, messageId = null) {
+            const input = document.getElementById('message-input');
+            const sendBtn = document.getElementById('send-btn');
+            const message = editedText || input.value.trim();
+
+            if (!message) return;
+
+            // If not editing, add new message
+            if (!editedText) {
+                messageId = addMessage(message, 'user-message', true);
+                conversationHistory.push({ role: 'user', content: message, id: messageId });
+            }
+
+            input.value = '';
+            sendBtn.disabled = true;
+
+            const loadingId = addMessage('<div class="loading">🤖 AI is analyzing your request and querying the database...</div>', 'ai-message');
+
+            try {
+                const response = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ question: message })
+                });
+
+                removeMessage(loadingId);
+
+                const data = await response.json();
+
+                if (data.success) {
+                    conversationHistory.push({ role: 'assistant', content: `Responded to: ${data.question}` });
+                    addAIResponse(data);
+                } else {
+                    addMessage(`❌ <strong>Error:</strong><br>${data.error}`, 'error');
+                }
+            } catch (error) {
+                removeMessage(loadingId);
+                addMessage(`❌ <strong>Connection Error:</strong><br>${error.message}`, 'error');
+            } finally {
+                sendBtn.disabled = false;
+                input.focus();
+            }
+        }
+
+        function addMessage(content, className, isUserMessage = false) {
+            const chatBox = document.getElementById('chat-box');
+            const messageDiv = document.createElement('div');
+            const messageId = 'msg_' + (messageIdCounter++);
+            messageDiv.id = messageId;
+            messageDiv.className = `message ${className}`;
+            
+            if (isUserMessage) {
+                messageDiv.innerHTML = `
+                    <div class="message-content" id="content_${messageId}">
+                        <span class="message-text">${content}</span>
+                    </div>
+                    <button class="edit-btn" onclick="enableEdit('${messageId}')">Edit</button>
+                `;
+            } else {
+                messageDiv.innerHTML = content;
+            }
+            
+            chatBox.appendChild(messageDiv);
+            chatBox.scrollTop = chatBox.scrollHeight;
+            return messageId;
+        }
+
+        function enableEdit(messageId) {
+            const contentDiv = document.getElementById(`content_${messageId}`);
+            const messageText = contentDiv.querySelector('.message-text').textContent;
+            
+            contentDiv.innerHTML = `
+                <input type="text" class="edit-input" id="edit_${messageId}" value="${messageText}" 
+                       onkeypress="if(event.key==='Enter') saveEdit('${messageId}')">
+                <div class="edit-actions">
+                    <button class="save-edit-btn" onclick="saveEdit('${messageId}')">Save & Rerun</button>
+                    <button class="cancel-edit-btn" onclick="cancelEdit('${messageId}', '${messageText.replace(/'/g, "\\'")}')">Cancel</button>
+                </div>
+            `;
+            
+            // Focus the input
+            document.getElementById(`edit_${messageId}`).focus();
+        }
+
+        function saveEdit(messageId) {
+            const editInput = document.getElementById(`edit_${messageId}`);
+            const newText = editInput.value.trim();
+            
+            if (!newText) return;
+            
+            // Update the message display
+            const contentDiv = document.getElementById(`content_${messageId}`);
+            contentDiv.innerHTML = `<span class="message-text">${newText}</span>`;
+            
+            // Find and remove all messages after this one
+            const messageElement = document.getElementById(messageId);
+            let nextSibling = messageElement.nextSibling;
+            while (nextSibling) {
+                const toRemove = nextSibling;
+                nextSibling = nextSibling.nextSibling;
+                if (toRemove.classList && toRemove.classList.contains('message')) {
+                    toRemove.remove();
+                }
+            }
+            
+            // Update conversation history
+            const historyIndex = conversationHistory.findIndex(msg => msg.id === messageId);
+            if (historyIndex !== -1) {
+                conversationHistory[historyIndex].content = newText;
+                // Remove all history after this point
+                conversationHistory = conversationHistory.slice(0, historyIndex + 1);
+            }
+            
+            // Show notification
+            showNotification('✏️ Query edited and rerunning...');
+            
+            // Rerun the query
+            sendMessage(newText, messageId);
+        }
+
+        function cancelEdit(messageId, originalText) {
+            const contentDiv = document.getElementById(`content_${messageId}`);
+            contentDiv.innerHTML = `<span class="message-text">${originalText}</span>`;
+        }
+
+        function removeMessage(messageId) {
+            const messageEl = document.getElementById(messageId);
+            if (messageEl) {
+                messageEl.remove();
+            }
+        }
+
+        function addAIResponse(data) {
+            let className = 'ai-message';
+            let html = `<strong>🎯 Query Results</strong><br><br>`;
+
+            if (data.insights) {
+                let formattedInsights = data.insights
+                // Convert headers
+                   .replace(/#### (.*?)(\n|$)/g, '<h4 style="margin: 10px 0 5px 0; color: #2e7d32;">$1</h4>')
+                   .replace(/### (.*?)(\n|$)/g, '<h3 style="margin: 15px 0 8px 0; color: #1b5e20;">$1</h3>')
+                   .replace(/## (.*?)(\n|$)/g, '<h2 style="margin: 20px 0 10px 0; color: #0d47a1;">$1</h2>')
+        // Convert bold text
+                   .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+        // Convert bullet points
+                   .replace(/^- /gm, '• ')
+        // Convert line breaks
+                   .replace(/\n/g, '<br>');
+    
+               html += `<div style="background: #e8f5e8; border-left: 4px solid #4caf50; padding: 10px; margin: 10px 0; border-radius: 5px;">`;
+               html += `<strong>🧠 AI Analysis:</strong><br><br>${formattedInsights}</div>`;
+            }
+
+            if (data.row_count !== undefined) {
+                html += `<div style="background: #e3f2fd; border: 1px solid #bbdefb; border-radius: 5px; padding: 8px 12px; font-size: 12px; margin: 5px 0; color: #1976d2;">📊 ${data.row_count} rows returned</div>`;
+            }
+
+            if (data.data && data.data.length > 0) {
+                html += createScrollableDataTable(data.data);
+                
+                // Add download section (removed PPT option)
+                html += `
+                <div class="download-section" style="display: block;">
+                    <strong>📥 Download Results:</strong>
+                    <div class="download-buttons">
+                        <button class="download-btn csv-btn" onclick="downloadResults('csv')">CSV</button>
+                        <button class="download-btn excel-btn" onclick="downloadResults('excel')">Excel</button>
+                        <button class="download-btn pdf-btn" onclick="downloadResults('pdf')">PDF Report</button>
+                        <button class="download-btn email-btn" onclick="showEmailModal()" style="background: #6f42c1; color: white;">📧 Email Report</button>
+                    </div>
+                </div>`;
+            }
+
+            if (data.sql_query && data.sql_query !== "No database query needed") {
+                html += `<br><strong>🔍 Generated SQL:</strong><br>`;
+                html += `<div style="background: #f1f1f1; border-left: 4px solid #333; padding: 10px; font-family: 'Courier New', monospace; font-size: 12px; overflow-x: auto; border-radius: 5px; margin: 10px 0;">${data.sql_query}</div>`;
+            }
+
+            addMessage(html, className);
+        }
+
+        function createScrollableDataTable(data) {
+            if (!data || data.length === 0) return '<p>No data to display</p>';
+
+            const keys = Object.keys(data[0]);
+            let html = '<div class="data-table-container"><table class="data-table"><thead><tr>';
+            
+            keys.forEach(key => {
+                html += `<th>${key}</th>`;
+            });
+            html += '</tr></thead><tbody>';
+            
+            data.forEach(row => {
+                html += '<tr>';
+                keys.forEach(key => {
+                    let value = row[key];
+                    if (typeof value === 'number' && value > 1000000) {
+                        value = (value / 1000000).toFixed(2) + 'M';
+                    } else if (typeof value === 'number' && value > 1000) {
+                        value = value.toLocaleString();
+                    }
+                    html += `<td>${value !== null && value !== undefined ? value : ''}</td>`;
+                });
+                html += '</tr>';
+            });
+            
+            html += '</tbody></table></div>';
+            return html;
+        }
+
+        // Download functions
+        async function downloadResults(format) {
+            try {
+                const response = await fetch(`/api/download/${format}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    const link = document.createElement('a');
+                    if (format === 'csv') {
+                        link.href = 'data:text/csv;base64,' + result.data;
+                    } else if (format === 'excel') {
+                        link.href = 'data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,' + result.data;
+                    } else if (format === 'pdf') {
+                        link.href = 'data:application/pdf;base64,' + result.data;
+                    }
+                    link.download = result.filename;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    
+                    showNotification('✅ Download successful!');
+                } else {
+                    alert('Error: ' + result.error);
+                }
+            } catch (error) {
+                alert('Download error: ' + error.message);
+            }
+        }
+
+        function showNotification(message) {
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.animation = 'slideIn 0.3s ease-out reverse';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+
+        // Email Modal functions
+        function showEmailModal() {
+            document.getElementById('emailModal').style.display = 'block';
+            // Pre-fill subject with context
+            const subject = `Portfolio Report - ${new Date().toLocaleDateString()}`;
+            document.getElementById('email-subject').value = subject;
+        }
+
+        function closeEmailModal() {
+            document.getElementById('emailModal').style.display = 'none';
+        }
+
+        async function sendEmail() {
+            const recipientEmail = document.getElementById('recipient-email').value.trim();
+            const subject = document.getElementById('email-subject').value.trim();
+            const message = document.getElementById('email-message').value.trim();
+            const format = document.getElementById('email-format').value;
+            
+            if (!recipientEmail) {
+                alert('Please enter a recipient email address');
+                return;
+            }
+            
+            if (!validateEmail(recipientEmail)) {
+                alert('Please enter a valid email address');
+                return;
+            }
+            
+            closeEmailModal();
+            showNotification('📧 Sending email...');
+            
+            try {
+                const response = await fetch('/api/send-email', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        recipient_email: recipientEmail,
+                        subject: subject,
+                        message: message,
+                        attachment_format: format
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showNotification('✅ Email sent successfully!');
+                } else {
+                    alert('Error sending email: ' + result.error);
+                }
+            } catch (error) {
+                alert('Email error: ' + error.message);
+            }
+        }
+
+        function validateEmail(email) {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(email);
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('emailModal');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>
